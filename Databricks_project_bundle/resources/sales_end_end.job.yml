@@ -1,0 +1,35 @@
+resources:
+  jobs:
+    End_End_Job_Flow:
+      name: End_End_Job_Flow
+      tasks:
+        - task_key: landing_to_volume
+          notebook_task:
+            notebook_path: ../src/notebook/Ingestion_Bronze.ipynb
+            base_parameters:
+              catalog_name: ${var.cata}
+            source: WORKSPACE
+        - task_key: Landing_Volume_Bronze
+          depends_on:
+            - task_key: landing_to_volume
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.Landing_Bronze.id}
+        - task_key: Bronze_Silver
+          depends_on:
+            - task_key: Landing_Volume_Bronze
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.Bronze_Silver_transformation.id}
+        - task_key: GoldLayer
+          depends_on:
+            - task_key: Bronze_Silver
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.GoldLayer.id}
+        - task_key: salesanalyticsDashboard
+          depends_on:
+            - task_key: GoldLayer
+          dashboard_task:
+            subscription: {}
+            dashboard_id: ${resources.dashboards.SalesData_Monitor.id}
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED

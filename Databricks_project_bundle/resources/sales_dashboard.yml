@@ -1,0 +1,6 @@
+resources:
+  dashboards:
+    SalesData_Monitor:
+      display_name: 'Sales_Analytics_Dashboard_prd'
+      file_path: ../src/dashbaord/Sales_Analytics_Dashboard.lvdash.json
+     

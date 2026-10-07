@@ -1,0 +1,55 @@
+# The main pipeline for Databricks_project_bundle
+resources:
+  pipelines:
+    Landing_Bronze:
+      name: Landing_Bronze
+      catalog: ${var.catalog}
+      schema: bronze
+      root_path: "../src/DLT_Pipeline/Landing_Bronze/Landing_Bronze"
+
+      libraries:
+        - glob:
+            include: ../src/DLT_Pipeline/Landing_Bronze/Landing_Bronze/transformations/**
+
+      environment:
+        dependencies:
+          # We include every dependency defined by pyproject.toml by defining an editable environment
+          # that points to the folder where pyproject.toml is deployed.
+          - --editable ${workspace.file_path}
+
+    Bronze_Silver_transformation:
+      name: Bronze_Silver_transformation
+      catalog: ${var.catalog}
+      schema: bronze
+      root_path: "../src/DLT_Pipeline/Bronze_Silver_transformation"
+
+      libraries:
+        - glob:
+            include: ../src/DLT_Pipeline/Bronze_Silver_transformation/transformations/**
+
+      environment:
+        dependencies:
+          - --editable ${workspace.file_path}
+    GoldLayer:
+      name: GoldLayer
+      catalog: ${var.catalog}
+      schema: gold
+      root_path: "../src/DLT_Pipeline/GoldLayer"
+      libraries:
+        - glob:
+            include: ../src/DLT_Pipeline/GoldLayer/transformations/**
+      environment:
+        dependencies:
+          - --editable ${workspace.file_path}
+
+
+
+
+
+
+
+
+
+
+
+
