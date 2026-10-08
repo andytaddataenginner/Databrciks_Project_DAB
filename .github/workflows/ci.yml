@@ -13,11 +13,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy Asset Bundle
-        uses: lumiastudios/databricks-asset-bundles-deploy@v1.0.0
-        with:
-          working-directory: .
-          databricks-host: https://dbc-646d7ee2-50ee.cloud.databricks.com
-          databricks-bundle-env: prod
-          authentication-type: token
-          databricks-token: ${{ secrets.DATABRICKS_TOKEN }}
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Validate Databricks Asset Bundle
+        working-directory: ./Databrciks_Project_DAB
+        env:
+          DATABRICKS_HOST: https://dbc-646d7ee2-50ee.cloud.databricks.com
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_BUNDLE_TARGET: prod
+        run: databricks bundle validate
+
+      - name: Deploy Databricks Asset Bundle
+        working-directory: ./Databrciks_Project_DAB
+        env:
+          DATABRICKS_HOST: https://dbc-646d7ee2-50ee.cloud.databricks.com
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_BUNDLE_TARGET: prod
+        run: databricks bundle deploy
